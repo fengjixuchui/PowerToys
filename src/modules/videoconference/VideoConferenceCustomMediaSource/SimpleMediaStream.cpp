@@ -167,7 +167,7 @@ ComPtr<IMFMediaType> SelectBestMediaType(IMFSourceReader* reader)
         UINT32 height = 0;
         MFGetAttributeSize(nextType, MF_MT_FRAME_SIZE, &width, &height);
 
-        double aspectRatio = (double)width / (double)height;
+        double aspectRatio = static_cast<double>(width) / height;
 
         GUID subtype{};
         nextType->GetGUID(MF_MT_SUBTYPE, &subtype);
@@ -186,7 +186,7 @@ ComPtr<IMFMediaType> SelectBestMediaType(IMFSourceReader* reader)
             continue;
         }
 
-        if (areSame(aspectRatio, (double) 16 / (double) 9))
+        if (areSame(aspectRatio, 16. / 9.))
         {
             is16by9RatioAvailable = true;
         }
@@ -214,8 +214,8 @@ ComPtr<IMFMediaType> SelectBestMediaType(IMFSourceReader* reader)
                                       UINT32 width = 0, height = 0;
                                       MFGetAttributeSize(ptr.Get(), MF_MT_FRAME_SIZE, &width, &height);
 
-                                      double ratio = (double)width / (double)height;
-                                      return !areSame(ratio, (double) 16 / (double) 9);
+                                      double ratio = static_cast<double>(width) / height;
+                                      return !areSame(ratio, 16. / 9.);
                                   }),
                                   end(supportedMediaTypes));
     }

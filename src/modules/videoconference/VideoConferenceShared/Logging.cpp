@@ -5,6 +5,7 @@
 #include <mutex>
 #include <iomanip>
 #include <chrono>
+#include <filesystem>
 
 #include <mfapi.h>
 
@@ -16,10 +17,23 @@ void LogToFile(std::string what)
 
     std::ofstream myfile;
 
-    time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 
-    myfile.open("C:/PowerToys.log", std::fstream::app);
-    myfile << now << " " << what << "\n";
+    time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+    std::tm tm;
+    localtime_s(&tm, &now);
+    char prefix[32];
+    std::strftime(prefix, sizeof(prefix) / sizeof(prefix[0]), "[%d.%m %H:%M:%S] ", &tm);
+
+    std::wstring logFilePath = std::filesystem::temp_directory_path();
+    logFilePath += L"\\VideoConference.log";
+    myfile.open(logFilePath, std::fstream::app);
+
+    static const auto newLaunch = [&]{
+      myfile << prefix << "<<<NEW SESSION>>\n\n";
+      return 0;
+    }();
+
+    myfile << prefix << what << "\n";
     myfile.close();
 }
 
