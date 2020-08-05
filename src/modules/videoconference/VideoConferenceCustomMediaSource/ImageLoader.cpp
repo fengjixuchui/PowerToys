@@ -19,7 +19,7 @@
 #include "Logging.h"
 
 #define RETURN_NULLPTR_IF_FAILED_WITH_LOGGING(val)                                       \
-    hr = val;                                                                    \
+    hr = val;                                                                            \
     if (FAILED(hr))                                                                      \
     {                                                                                    \
         LogToFile(std::string(#val) + " Failed with error code: " + std::to_string(hr)); \
@@ -96,10 +96,12 @@ ComPtr<IMFSample> LoadImageAsSample(ComPtr<IStream> imageStream, IMFMediaType* s
         sourceImageFrame.Attach(decodedFrame.Detach());
     }
 
-    // We need to encode the image as jpg, since it's always supported by MT video decoders and could be converted to
-    // other formats
+    MFT_REGISTER_TYPE_INFO outputFilter = { MFMediaType_Video, {} };
+    RETURN_NULLPTR_IF_FAILED_WITH_LOGGING(sampleMediaType->GetGUID(MF_MT_SUBTYPE, &outputFilter.guidSubtype));
+
     ComPtr<IWICBitmapEncoder> jpgEncoder;
-    RETURN_NULLPTR_IF_FAILED_WITH_LOGGING(pWIC->CreateEncoder(GUID_ContainerFormatBmp, nullptr, &jpgEncoder));
+    RETURN_NULLPTR_IF_FAILED_WITH_LOGGING(pWIC->CreateEncoder(
+        outputFilter.guidSubtype == MFVideoFormat_RGB24 ? GUID_ContainerFormatBmp : GUID_ContainerFormatJpeg, nullptr, &jpgEncoder));
 
     // Prepare the encoder output memory stream and encoding params
     ComPtr<IStream> jpgStream;
@@ -149,9 +151,7 @@ ComPtr<IMFSample> LoadImageAsSample(ComPtr<IStream> imageStream, IMFMediaType* s
     RETURN_NULLPTR_IF_FAILED_WITH_LOGGING(inputSample->AddBuffer(inputMediaBuffer));
 
     // Now we are ready to convert it to the requested media type, so we need to find a suitable jpg encoder
-    MFT_REGISTER_TYPE_INFO inputFilter = { MFMediaType_Video, MFVideoFormat_RGB24 };
-    MFT_REGISTER_TYPE_INFO outputFilter = { MFMediaType_Video, {} };
-    RETURN_NULLPTR_IF_FAILED_WITH_LOGGING(sampleMediaType->GetGUID(MF_MT_SUBTYPE, &outputFilter.guidSubtype));
+    MFT_REGISTER_TYPE_INFO inputFilter = { MFMediaType_Video, outputFilter.guidSubtype == MFVideoFormat_RGB24 ? MFVideoFormat_RGB24 : MFVideoFormat_MJPG };
 
     // But if no conversion is needed, just return the input sample
     if (!memcmp(&inputFilter.guidSubtype, &outputFilter.guidSubtype, sizeof(GUID)))

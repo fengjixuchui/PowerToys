@@ -181,7 +181,10 @@ ComPtr<IMFMediaType> SelectBestMediaType(IMFSourceReader* reader)
                   std::string(", aspect ratio=") +
                   std::to_string(aspectRatio));
 
-        if (subtype != MFVideoFormat_RGB24)
+        if (subtype != MFVideoFormat_YUY2 &&
+            subtype != MFVideoFormat_RGB24 &&
+            subtype != MFVideoFormat_MJPG &&
+            subtype != MFVideoFormat_NV12)
         {
             continue;
         }
