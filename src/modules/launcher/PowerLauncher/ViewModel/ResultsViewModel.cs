@@ -23,8 +23,8 @@ namespace PowerLauncher.ViewModel
 
         private readonly object _collectionLock = new object();
         private readonly Settings _settings;
-        // private int MaxResults => _settings?.MaxResultsToShow ?? 6;
 
+        // private int MaxResults => _settings?.MaxResultsToShow ?? 6;
         public ResultsViewModel()
         {
             Results = new ResultCollection();
@@ -105,6 +105,7 @@ namespace PowerLauncher.ViewModel
                     break;
                 }
             }
+
             return index;
         }
 
@@ -189,9 +190,9 @@ namespace PowerLauncher.ViewModel
 
         public void SelectNextContextMenuItem()
         {
-            if(SelectedItem != null)
+            if (SelectedItem != null)
             {
-                if(!SelectedItem.SelectNextContextButton())
+                if (!SelectedItem.SelectNextContextButton())
                 {
                     SelectedItem.SelectLastContextButton();
                 }
@@ -221,7 +222,7 @@ namespace PowerLauncher.ViewModel
         /// <summary>
         /// Add new results to ResultCollection
         /// </summary>
-        public void AddResults(List<Result> newRawResults, string resultId, CancellationToken ct)
+        public void AddResults(List<Result> newRawResults, CancellationToken ct)
         {
             if (newRawResults == null)
             {
@@ -229,13 +230,12 @@ namespace PowerLauncher.ViewModel
             }
 
             List<ResultViewModel> newResults = new List<ResultViewModel>(newRawResults.Count);
-            foreach(Result r in newRawResults)
+            foreach (Result r in newRawResults)
             {
                 newResults.Add(new ResultViewModel(r));
                 ct.ThrowIfCancellationRequested();
             }
 
-            Results.RemoveAll(r => r.Result.PluginID == resultId);
             Results.AddRange(newResults);
         }
         #endregion

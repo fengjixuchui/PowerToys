@@ -100,8 +100,10 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Helpers\IThrottledActionInvoker.cs" />
+    <Compile Include="Helpers\ThrottledActionInvoker.cs" />
     <Compile Include="Settings\IUserSettings.cs" />
-    <Compile Include="Settings\SettingItem.cs" />
+    <Compile Include="Settings\SettingItem`1.cs" />
     <Compile Include="Settings\UserSettings.cs" />
     <Compile Include="Telemetry\ColorPickerCancelledEvent.cs" />
     <Compile Include="Telemetry\ColorPickerShowEvent.cs" />
