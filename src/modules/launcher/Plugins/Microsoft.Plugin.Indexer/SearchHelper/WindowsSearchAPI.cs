@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using Microsoft.Search.Interop;
 
 namespace Microsoft.Plugin.Indexer.SearchHelper
@@ -13,8 +14,9 @@ namespace Microsoft.Plugin.Indexer.SearchHelper
         public bool DisplayHiddenFiles { get; set; }
 
         private readonly ISearch windowsIndexerSearch;
-        private readonly object _lock = new object();
+
         private const uint _fileAttributeHidden = 0x2;
+        private static readonly Regex _likeRegex = new Regex(@"[^\s(]+\s+LIKE\s+'([^']|'')*'\s+OR\s+", RegexOptions.Compiled);
 
         public WindowsSearchAPI(ISearch windowsIndexerSearch, bool displayHiddenFiles = false)
         {
@@ -22,7 +24,7 @@ namespace Microsoft.Plugin.Indexer.SearchHelper
             DisplayHiddenFiles = displayHiddenFiles;
         }
 
-        public List<SearchResult> ExecuteQuery(ISearchQueryHelper queryHelper, string keyword)
+        public List<SearchResult> ExecuteQuery(ISearchQueryHelper queryHelper, string keyword, bool isFullQuery = false)
         {
             if (queryHelper == null)
             {
@@ -33,6 +35,17 @@ namespace Microsoft.Plugin.Indexer.SearchHelper
 
             // Generate SQL from our parameters, converting the userQuery from AQS->WHERE clause
             string sqlQuery = queryHelper.GenerateSQLFromUserQuery(keyword);
+            var simplifiedQuery = SimplifyQuery(sqlQuery);
+
+            if (!isFullQuery)
+            {
+                sqlQuery = simplifiedQuery;
+            }
+            else if (simplifiedQuery.Equals(sqlQuery, StringComparison.CurrentCultureIgnoreCase))
+            {
+                // if a full query is requested but there is no difference between the queries, return empty results
+                return results;
+            }
 
             // execute the command, which returns the results as an OleDBResults.
             List<OleDBResult> oleDBResults = windowsIndexerSearch.Query(queryHelper.ConnectionString, sqlQuery);
@@ -40,25 +53,19 @@ namespace Microsoft.Plugin.Indexer.SearchHelper
             // Loop over all records from the database
             foreach (OleDBResult oleDBResult in oleDBResults)
             {
-                if (oleDBResult.FieldData[0] == DBNull.Value || oleDBResult.FieldData[1] == DBNull.Value || oleDBResult.FieldData[2] == DBNull.Value)
+                if (oleDBResult.FieldData[0] == DBNull.Value || oleDBResult.FieldData[1] == DBNull.Value)
                 {
                     continue;
                 }
 
-                uint fileAttributes = (uint)((long)oleDBResult.FieldData[2]);
-                bool isFileHidden = (fileAttributes & _fileAttributeHidden) == _fileAttributeHidden;
-
-                if (DisplayHiddenFiles || !isFileHidden)
+                var uri_path = new Uri((string)oleDBResult.FieldData[0]);
+                var result = new SearchResult
                 {
-                    var uri_path = new Uri((string)oleDBResult.FieldData[0]);
-                    var result = new SearchResult
-                    {
-                        Path = uri_path.LocalPath,
-                        Title = (string)oleDBResult.FieldData[1],
-                    };
+                    Path = uri_path.LocalPath,
+                    Title = (string)oleDBResult.FieldData[1],
+                };
 
-                    results.Add(result);
-                }
+                results.Add(result);
             }
 
             return results;
@@ -94,7 +101,7 @@ namespace Microsoft.Plugin.Indexer.SearchHelper
             }
         }
 
-        public static void InitQueryHelper(out ISearchQueryHelper queryHelper, int maxCount)
+        public static void InitQueryHelper(out ISearchQueryHelper queryHelper, int maxCount, bool displayHiddenFiles)
         {
             // This uses the Microsoft.Search.Interop assembly
             CSearchManager manager = new CSearchManager();
@@ -114,6 +121,12 @@ namespace Microsoft.Plugin.Indexer.SearchHelper
             // Set additional query restriction
             queryHelper.QueryWhereRestrictions = "AND scope='file:'";
 
+            if (!displayHiddenFiles)
+            {
+                // https://docs.microsoft.com/en-us/windows/win32/search/all-bitwise
+                queryHelper.QueryWhereRestrictions += " AND System.FileAttributes <> SOME BITWISE " + _fileAttributeHidden;
+            }
+
             // To filter based on title for now
             queryHelper.QueryContentProperties = "System.FileName";
 
@@ -121,15 +134,17 @@ namespace Microsoft.Plugin.Indexer.SearchHelper
             queryHelper.QuerySorting = "System.DateModified DESC";
         }
 
-        public IEnumerable<SearchResult> Search(string keyword, string pattern = "*", int maxCount = 30)
+        public IEnumerable<SearchResult> Search(string keyword, bool isFullQuery = false, string pattern = "*", int maxCount = 30)
         {
-            lock (_lock)
-            {
-                ISearchQueryHelper queryHelper;
-                InitQueryHelper(out queryHelper, maxCount);
-                ModifyQueryHelper(ref queryHelper, pattern);
-                return ExecuteQuery(queryHelper, keyword);
-            }
+            ISearchQueryHelper queryHelper;
+            InitQueryHelper(out queryHelper, maxCount, DisplayHiddenFiles);
+            ModifyQueryHelper(ref queryHelper, pattern);
+            return ExecuteQuery(queryHelper, keyword, isFullQuery);
+        }
+
+        public static string SimplifyQuery(string sqlQuery)
+        {
+            return _likeRegex.Replace(sqlQuery, string.Empty);
         }
     }
 }
