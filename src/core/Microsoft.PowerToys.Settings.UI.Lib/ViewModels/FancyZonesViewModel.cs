@@ -2,15 +2,12 @@
 // The Microsoft Corporation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using System.Runtime.CompilerServices;
-using Microsoft.PowerToys.Settings.UI.Helpers;
-using Microsoft.PowerToys.Settings.UI.Lib;
-using Microsoft.PowerToys.Settings.UI.ViewModels.Commands;
-using Microsoft.PowerToys.Settings.UI.Views;
-using Microsoft.Toolkit.Uwp.Helpers;
-using Windows.UI;
+using Microsoft.PowerToys.Settings.UI.Lib.Helpers;
+using Microsoft.PowerToys.Settings.UI.Lib.ViewModels.Commands;
 
-namespace Microsoft.PowerToys.Settings.UI.ViewModels
+namespace Microsoft.PowerToys.Settings.UI.Lib.ViewModels
 {
     public class FancyZonesViewModel : Observable
     {
@@ -20,16 +17,22 @@ namespace Microsoft.PowerToys.Settings.UI.ViewModels
 
         private FancyZonesSettings Settings { get; set; }
 
-        public FancyZonesViewModel()
+        private Func<string, int> SendConfigMSG { get; }
+
+        private string settingsConfigFileFolder = string.Empty;
+
+        public FancyZonesViewModel(Func<string, int> ipcMSGCallBackFunc, string configFileSubfolder = "")
         {
+            settingsConfigFileFolder = configFileSubfolder;
+
             try
             {
-                Settings = SettingsUtils.GetSettings<FancyZonesSettings>(ModuleName);
+                Settings = SettingsUtils.GetSettings<FancyZonesSettings>(GetSettingsSubPath());
             }
             catch
             {
                 Settings = new FancyZonesSettings();
-                SettingsUtils.SaveSettings(Settings.ToJsonString(), ModuleName);
+                SettingsUtils.SaveSettings(Settings.ToJsonString(), GetSettingsSubPath());
             }
 
             LaunchEditorEventHandler = new ButtonClickCommand(LaunchEditor);
@@ -45,19 +48,22 @@ namespace Microsoft.PowerToys.Settings.UI.ViewModels
             _restoreSize = Settings.Properties.FancyzonesRestoreSize.Value;
             _useCursorPosEditorStartupScreen = Settings.Properties.UseCursorposEditorStartupscreen.Value;
             _showOnAllMonitors = Settings.Properties.FancyzonesShowOnAllMonitors.Value;
-            _spanZonesAcrossMonitors = Settings.Properties.FancyzonesSpanZonesAcrossMonitors.Value;
             _makeDraggedWindowTransparent = Settings.Properties.FancyzonesMakeDraggedWindowTransparent.Value;
             _highlightOpacity = Settings.Properties.FancyzonesHighlightOpacity.Value;
             _excludedApps = Settings.Properties.FancyzonesExcludedApps.Value;
             EditorHotkey = Settings.Properties.FancyzonesEditorHotkey.Value;
+
+            // set the callback functions value to hangle outgoing IPC message.
+            SendConfigMSG = ipcMSGCallBackFunc;
+
             string inactiveColor = Settings.Properties.FancyzonesInActiveColor.Value;
-            _zoneInActiveColor = inactiveColor != string.Empty ? inactiveColor.ToColor() : "#F5FCFF".ToColor();
+            _zoneInActiveColor = inactiveColor != string.Empty ? inactiveColor : "#F5FCFF";
 
             string borderColor = Settings.Properties.FancyzonesBorderColor.Value;
-            _zoneBorderColor = borderColor != string.Empty ? borderColor.ToColor() : "#FFFFFF".ToColor();
+            _zoneBorderColor = borderColor != string.Empty ? borderColor : "#FFFFFF";
 
             string highlightColor = Settings.Properties.FancyzonesZoneHighlightColor.Value;
-            _zoneHighlightColor = highlightColor != string.Empty ? highlightColor.ToColor() : "#0078D7".ToColor();
+            _zoneHighlightColor = highlightColor != string.Empty ? highlightColor : "#0078D7";
 
             GeneralSettings generalSettings;
             try
@@ -91,9 +97,9 @@ namespace Microsoft.PowerToys.Settings.UI.ViewModels
         private int _highlightOpacity;
         private string _excludedApps;
         private HotkeySettings _editorHotkey;
-        private Color _zoneInActiveColor;
-        private Color _zoneBorderColor;
-        private Color _zoneHighlightColor;
+        private string _zoneInActiveColor;
+        private string _zoneBorderColor;
+        private string _zoneHighlightColor;
 
         public bool IsEnabled
         {
@@ -111,7 +117,7 @@ namespace Microsoft.PowerToys.Settings.UI.ViewModels
                     generalSettings.Enabled.FancyZones = value;
                     OutGoingGeneralSettings snd = new OutGoingGeneralSettings(generalSettings);
 
-                    ShellPage.DefaultSndMSGCallback(snd.ToString());
+                    SendConfigMSG(snd.ToString());
                     OnPropertyChanged("IsEnabled");
                 }
             }
@@ -151,6 +157,11 @@ namespace Microsoft.PowerToys.Settings.UI.ViewModels
                     RaisePropertyChanged();
                 }
             }
+        }
+
+        public string GetSettingsSubPath()
+        {
+            return settingsConfigFileFolder + "\\" + ModuleName;
         }
 
         public bool OverrideSnapHotkeys
@@ -351,7 +362,7 @@ namespace Microsoft.PowerToys.Settings.UI.ViewModels
             }
         }
 
-        public Color ZoneHighlightColor
+        public string ZoneHighlightColor
         {
             get
             {
@@ -360,16 +371,16 @@ namespace Microsoft.PowerToys.Settings.UI.ViewModels
 
             set
             {
-                if (value != _zoneHighlightColor)
+                if (!value.Equals(_zoneHighlightColor))
                 {
                     _zoneHighlightColor = value;
-                    Settings.Properties.FancyzonesZoneHighlightColor.Value = ToRGBHex(value);
+                    Settings.Properties.FancyzonesZoneHighlightColor.Value = value;
                     RaisePropertyChanged();
                 }
             }
         }
 
-        public Color ZoneBorderColor
+        public string ZoneBorderColor
         {
             get
             {
@@ -378,16 +389,16 @@ namespace Microsoft.PowerToys.Settings.UI.ViewModels
 
             set
             {
-                if (value != _zoneBorderColor)
+                if (!value.Equals(_zoneBorderColor, StringComparison.OrdinalIgnoreCase))
                 {
                     _zoneBorderColor = value;
-                    Settings.Properties.FancyzonesBorderColor.Value = ToRGBHex(value);
+                    Settings.Properties.FancyzonesBorderColor.Value = value;
                     RaisePropertyChanged();
                 }
             }
         }
 
-        public Color ZoneInActiveColor
+        public string ZoneInActiveColor
         {
             get
             {
@@ -396,10 +407,10 @@ namespace Microsoft.PowerToys.Settings.UI.ViewModels
 
             set
             {
-                if (value != _zoneInActiveColor)
+                if (!value.Equals(_zoneInActiveColor))
                 {
                     _zoneInActiveColor = value;
-                    Settings.Properties.FancyzonesInActiveColor.Value = ToRGBHex(value);
+                    Settings.Properties.FancyzonesInActiveColor.Value = value;
                     RaisePropertyChanged();
                 }
             }
@@ -470,22 +481,17 @@ namespace Microsoft.PowerToys.Settings.UI.ViewModels
         private void LaunchEditor()
         {
             // send message to launch the zones editor;
-            ShellPage.DefaultSndMSGCallback("{\"action\":{\"FancyZones\":{\"action_name\":\"ToggledFZEditor\", \"value\":\"\"}}}");
-        }
-
-        private string ToRGBHex(Color color)
-        {
-            return "#" + color.R.ToString("X2") + color.G.ToString("X2") + color.B.ToString("X2");
+            SendConfigMSG("{\"action\":{\"FancyZones\":{\"action_name\":\"ToggledFZEditor\", \"value\":\"\"}}}");
         }
 
         public void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
             OnPropertyChanged(propertyName);
-            if (ShellPage.DefaultSndMSGCallback != null)
+            if (SendConfigMSG != null)
             {
                 SndFancyZonesSettings outsettings = new SndFancyZonesSettings(Settings);
                 SndModuleSettings<SndFancyZonesSettings> ipcMessage = new SndModuleSettings<SndFancyZonesSettings>(outsettings);
-                ShellPage.DefaultSndMSGCallback(ipcMessage.ToJsonString());
+                SendConfigMSG(ipcMessage.ToJsonString());
             }
         }
     }
