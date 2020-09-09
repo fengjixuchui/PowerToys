@@ -1,5 +1,6 @@
 #include "pch.h"
 
+#include <common/common.h>
 #include <common/dpi_aware.h>
 #include <common/on_thread_executor.h>
 #include <common/window_helpers.h>
@@ -17,6 +18,8 @@
 #include "MonitorWorkAreaHandler.h"
 
 #include <lib/SecondaryMouseButtonsHook.h>
+
+extern "C" IMAGE_DOS_HEADER __ImageBase;
 
 enum class DisplayChangeType
 {
@@ -135,35 +138,17 @@ public:
     IFACEMETHODIMP_(COLORREF)
     GetZoneColor() noexcept
     {
-        // Skip the leading # and convert to long
-        const auto color = m_settings->GetSettings()->zoneColor;
-        const auto tmp = std::stol(color.substr(1), nullptr, 16);
-        const auto nR = (tmp & 0xFF0000) >> 16;
-        const auto nG = (tmp & 0xFF00) >> 8;
-        const auto nB = (tmp & 0xFF);
-        return RGB(nR, nG, nB);
+        return (FancyZonesUtils::HexToRGB(m_settings->GetSettings()->zoneColor));
     }
     IFACEMETHODIMP_(COLORREF)
     GetZoneBorderColor() noexcept
     {
-        // Skip the leading # and convert to long
-        const auto color = m_settings->GetSettings()->zoneBorderColor;
-        const auto tmp = std::stol(color.substr(1), nullptr, 16);
-        const auto nR = (tmp & 0xFF0000) >> 16;
-        const auto nG = (tmp & 0xFF00) >> 8;
-        const auto nB = (tmp & 0xFF);
-        return RGB(nR, nG, nB);
+        return (FancyZonesUtils::HexToRGB(m_settings->GetSettings()->zoneBorderColor));
     }
     IFACEMETHODIMP_(COLORREF)
     GetZoneHighlightColor() noexcept
     {
-        // Skip the leading # and convert to long
-        const auto color = m_settings->GetSettings()->zoneHighlightColor;
-        const auto tmp = std::stol(color.substr(1), nullptr, 16);
-        const auto nR = (tmp & 0xFF0000) >> 16;
-        const auto nG = (tmp & 0xFF00) >> 8;
-        const auto nB = (tmp & 0xFF);
-        return RGB(nR, nG, nB);
+        return (FancyZonesUtils::HexToRGB(m_settings->GetSettings()->zoneHighlightColor));
     }
     IFACEMETHODIMP_(int)
     GetZoneHighlightOpacity() noexcept
@@ -645,6 +630,29 @@ void FancyZones::ToggleEditor() noexcept
         m_dpiUnawareThread.submit(OnThreadExecutor::task_t{ [&] {
                               allMonitors = FancyZonesUtils::GetAllMonitorRects<&MONITORINFOEX::rcWork>();
             } }).wait();
+
+        UINT currentDpi = 0;
+        for (const auto& monitor : allMonitors)
+        {
+            UINT dpiX = 0;
+            UINT dpiY = 0;
+            if (GetDpiForMonitor(monitor.first, MDT_EFFECTIVE_DPI, &dpiX, &dpiY) == S_OK)
+            {
+                if (currentDpi == 0)
+                {
+                  currentDpi = dpiX;
+                  continue;
+                }
+                if (currentDpi != dpiX)
+                {
+                    MessageBoxW(NULL,
+                    GET_RESOURCE_STRING(IDS_SPAN_ACROSS_ZONES_WARNING).c_str(),
+                    GET_RESOURCE_STRING(IDS_POWERTOYS_FANCYZONES).c_str(),
+                    MB_OK | MB_ICONWARNING);
+                    break;
+                }
+            }
+        }
 
         for (auto& [monitor, workArea] : allMonitors)
         {
