@@ -1,17 +1,17 @@
 # Viewmodels
-The viewmodels are located within the [`Microsoft.PowerToys.Settings.UI.Lib`](/src/core/Microsoft.PowerToys.Settings.UI.Lib) project.
+The viewmodels are located within the [`Microsoft.PowerToys.Settings.UI.Library`](/src/core/Microsoft.PowerToys.Settings.UI.Library) project.
 
 ## Components
 - Each viewmodel takes in the general `settingsRepository`, the `moduleSettingsRepository` if it exists and the delegates for IPC communication.
-- The general `settingsRepository` contains the general configurations of all powertoys whereas the `moduleSettingsRepository` is spcific to the module. This is to ensure that the configuration details are shared amongst the viewmodels without having to re-open the `settings.json` file.
+- The general `settingsRepository` contains the general configurations of all powertoys whereas the `moduleSettingsRepository` is specific to the module. This is to ensure that the configuration details are shared amongst the viewmodels without having to re-open the `settings.json` file.
 - Whenever there is a change in the UI, the `OnPropertyChanged` event is invoked and the viewmodel sends a corresponding IPC message to the runner which would perform the designated action such as dispatching the change to the modules or enabling/disabling the powertoy etc.
 
 #### Difference between viewmodels
-- The [`GeneralViewModel`](/src/core/Microsoft.PowerToys.Settings.UI.Lib/ViewModels/GeneralViewModel.cs) is different from the rest of the view models with regard to the IPC communication wherein it sends special IPC messages to the runner to check for updates and to restart as admin.
+- The [`GeneralViewModel`](/src/core/Microsoft.PowerToys.Settings.UI.Library/ViewModels/GeneralViewModel.cs) is different from the rest of the view models with regard to the IPC communication wherein it sends special IPC messages to the runner to check for updates and to restart as admin.
 - Each of the powerToy viewmodels have two types of IPC communications, one for the general status of the powerToy and the other for communication powerToy specific change in properties to the runner.
 
-## [`SettingsRepository`](src/core/Microsoft.PowerToys.Settings.UI.Lib/SettingsRepository`1.cs)
-- The [`SettingsRepository`](src/core/Microsoft.PowerToys.Settings.UI.Lib/SettingsRepository`1.cs) is a generic singleton which contains the configurations for each viewmodel.
+## [`SettingsRepository`](src/core/Microsoft.PowerToys.Settings.UI.Library/SettingsRepository`1.cs)
+- The [`SettingsRepository`](src/core/Microsoft.PowerToys.Settings.UI.Library/SettingsRepository`1.cs) is a generic singleton which contains the configurations for each viewmodel.
 - As it is a generic singleton, there can only be one instance of the settings repository of a particular type. This ensures that all the viewmodels are modifying a common object and a change made in one locations reflects everywhere.
 - The singleton implementation is thread-safe. Unit tests have been added for the same.
 

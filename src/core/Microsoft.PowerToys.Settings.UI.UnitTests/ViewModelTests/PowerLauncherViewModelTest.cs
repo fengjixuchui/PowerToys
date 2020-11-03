@@ -2,14 +2,15 @@
 // The Microsoft Corporation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using Microsoft.PowerToys.Settings.UI.Lib;
-using Microsoft.PowerToys.Settings.UI.Lib.ViewModels;
+using Microsoft.PowerToys.Settings.UI.Library;
+using Microsoft.PowerToys.Settings.UI.Library.ViewModels;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using Moq;
 using Microsoft.PowerToys.Settings.UI.UnitTests.Mocks;
 using Microsoft.PowerToys.Settings.UI.UnitTests.BackwardsCompatibility;
 using System.Globalization;
+using System.IO.Abstractions;
 
 namespace ViewModelTests
 {
@@ -52,13 +53,16 @@ namespace ViewModelTests
         [DataRow("v0.22.0", "settings.json")]
         public void OriginalFilesModificationTest(string version, string fileName)
         {
+            var settingPathMock = new Mock<ISettingsPath>();
+
             var mockIOProvider = BackCompatTestProperties.GetModuleIOProvider(version, PowerLauncherSettings.ModuleName, fileName);
-            var mockSettingsUtils = new SettingsUtils(mockIOProvider.Object);
+            var mockSettingsUtils = new SettingsUtils(mockIOProvider.Object, settingPathMock.Object);
             PowerLauncherSettings originalSettings = mockSettingsUtils.GetSettings<PowerLauncherSettings>(PowerLauncherSettings.ModuleName);
 
             var mockGeneralIOProvider = BackCompatTestProperties.GetGeneralSettingsIOProvider(version);
-            var mockGeneralSettingsUtils = new SettingsUtils(mockGeneralIOProvider.Object);
+            var mockGeneralSettingsUtils = new SettingsUtils(mockGeneralIOProvider.Object, settingPathMock.Object);
             GeneralSettings originalGeneralSettings = mockGeneralSettingsUtils.GetSettings<GeneralSettings>();
+
             var generalSettingsRepository = new BackCompatTestProperties.MockSettingsRepository<GeneralSettings>(mockGeneralSettingsUtils);
 
             // Initialise View Model with test Config files

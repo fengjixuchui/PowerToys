@@ -29,10 +29,11 @@
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="12.2.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Microsoft.PowerToys.Settings.UI.Lib\Microsoft.PowerToys.Settings.UI.Lib.csproj" />
+    <ProjectReference Include="..\Microsoft.PowerToys.Settings.UI.Library\Microsoft.PowerToys.Settings.UI.Library.csproj" />
   </ItemGroup>
 
 </Project>

@@ -2,13 +2,14 @@
 // The Brice Lambson licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.  Code forked from Brice Lambson's https://github.com/bricelam/ImageResizer/
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Globalization;
-using System.IO;
+using System.IO.Abstractions;
 using System.Threading;
 using System.Windows.Media.Imaging;
 using ImageResizer.Models;
@@ -21,9 +22,11 @@ namespace ImageResizer.Properties
     [JsonObject(MemberSerialization.OptIn)]
     public sealed partial class Settings : IDataErrorInfo, INotifyPropertyChanged
     {
+        private static readonly IFileSystem _fileSystem = new FileSystem();
+
         // Used to synchronize access to the settings.json file
         private static Mutex _jsonMutex = new Mutex();
-        private static string _settingsPath = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), "Microsoft", "PowerToys", "ImageResizer", "settings.json");
+        private static string _settingsPath = _fileSystem.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), "Microsoft", "PowerToys", "ImageResizer", "settings.json");
         private string _fileNameFormat;
         private bool _shrinkOnly;
         private int _selectedSizeIndex;
@@ -62,17 +65,18 @@ namespace ImageResizer.Properties
 
         public IEnumerable<ResizeSize> AllSizes { get; set; }
 
+        // Using OrdinalIgnoreCase since this is internal and used for comparison with symbols
         public string FileNameFormat
             => _fileNameFormat
                 ?? (_fileNameFormat = FileName
-                    .Replace("{", "{{")
-                    .Replace("}", "}}")
-                    .Replace("%1", "{0}")
-                    .Replace("%2", "{1}")
-                    .Replace("%3", "{2}")
-                    .Replace("%4", "{3}")
-                    .Replace("%5", "{4}")
-                    .Replace("%6", "{5}"));
+                    .Replace("{", "{{", StringComparison.OrdinalIgnoreCase)
+                    .Replace("}", "}}", StringComparison.OrdinalIgnoreCase)
+                    .Replace("%1", "{0}", StringComparison.OrdinalIgnoreCase)
+                    .Replace("%2", "{1}", StringComparison.OrdinalIgnoreCase)
+                    .Replace("%3", "{2}", StringComparison.OrdinalIgnoreCase)
+                    .Replace("%4", "{3}", StringComparison.OrdinalIgnoreCase)
+                    .Replace("%5", "{4}", StringComparison.OrdinalIgnoreCase)
+                    .Replace("%6", "{5}", StringComparison.OrdinalIgnoreCase));
 
         public ResizeSize SelectedSize
         {
@@ -110,6 +114,7 @@ namespace ImageResizer.Properties
 
                 if (JpegQualityLevel < 1 || JpegQualityLevel > 100)
                 {
+                    // Using CurrentCulture since this is user facing
                     return string.Format(CultureInfo.CurrentCulture, Resources.ValueMustBeBetween, 1, 100);
                 }
 
@@ -381,25 +386,25 @@ namespace ImageResizer.Properties
             jsonData += "}";
 
             // Create directory if it doesn't exist
-            FileInfo file = new FileInfo(SettingsPath);
+            IFileInfo file = _fileSystem.FileInfo.FromFileName(SettingsPath);
             file.Directory.Create();
 
             // write string to file
-            File.WriteAllText(SettingsPath, jsonData);
+            _fileSystem.File.WriteAllText(SettingsPath, jsonData);
             _jsonMutex.ReleaseMutex();
         }
 
         public void Reload()
         {
             _jsonMutex.WaitOne();
-            if (!File.Exists(SettingsPath))
+            if (!_fileSystem.File.Exists(SettingsPath))
             {
                 _jsonMutex.ReleaseMutex();
                 Save();
                 return;
             }
 
-            string jsonData = File.ReadAllText(SettingsPath);
+            string jsonData = _fileSystem.File.ReadAllText(SettingsPath);
             JObject imageResizerSettings = JObject.Parse(jsonData);
 
             // Replace the { "value": <Value> } with <Value> to match the Settings object format
