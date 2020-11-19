@@ -233,6 +233,7 @@ cdpx
 cdpxwin
 cend
 CENTERALIGN
+cerr
 cfg
 Cfg
 changecursor
@@ -295,6 +296,7 @@ codeofconduct
 codereview
 COINIT
 Colorbrush
+colorconv
 colorpicker
 colorpickerref
 COLORREF
@@ -903,6 +905,8 @@ hresult
 hrgn
 HRSRC
 HSCROLL
+hsb
+hsi
 hsl
 hstring
 hsv
@@ -913,6 +917,7 @@ html
 htt
 http
 hu
+hwb
 HWINEVENTHOOK
 hwnd
 HWNDFIRST
@@ -1087,6 +1092,7 @@ IPrincipal
 IProgram
 IPublic
 IQuery
+IRead
 IReflect
 IRegistered
 IRegistration
@@ -1246,6 +1252,7 @@ LOGMSG
 logon
 LOGPIXELSX
 LOn
+lookbehind
 lowlevel
 lowlevelkb
 LOWORD
@@ -1332,6 +1339,8 @@ memset
 Mensching
 MENUITEMINFO
 menurc
+menuitem
+MENUITEMINFOW
 MENUSTART
 messagebox
 METACHARSET
@@ -1356,6 +1365,7 @@ MMI
 mockapi
 MODECHANGE
 moderncop
+modernwpf
 modulekey
 MONITORINFO
 MONITORINFOEX
@@ -1438,6 +1448,7 @@ NCMBUTTONDOWN
 NCMBUTTONUP
 NCMOUSELEAVE
 NCMOUSEMOVE
+NCol
 NCPAINT
 NCRBUTTONDBLCLK
 NCRBUTTONDOWN
@@ -1446,6 +1457,7 @@ NDEBUG
 ndp
 neq
 NESW
+netcore
 netcoreapp
 netframework
 netfx
