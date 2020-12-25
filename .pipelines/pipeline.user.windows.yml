@@ -37,6 +37,10 @@ restore:
     - !!defaultcommand
       name: 'Restore Localization packages'
       command: '.pipelines\restore-localization.cmd'
+    - !!defaultcommand
+      name: 'Restore Tools packages'
+      command: '.pipelines\restore-tools.cmd'
+
 
 
 build:
@@ -63,8 +67,10 @@ build:
           to: 'Build_Output'
           include:
             - 'action_runner.exe'
+            - 'BugReportTool\BugReportTool.exe'
             - 'modules\ColorPicker\ColorPicker.dll'
-            - 'modules\ColorPicker\ColorPicker.exe'
+            - 'modules\ColorPicker\ColorPickerUI.dll'
+            - 'modules\ColorPicker\ColorPickerUI.exe'
             - 'modules\ColorPicker\ManagedCommon.dll'
             - 'modules\ColorPicker\Microsoft.PowerToys.Settings.UI.Lib.dll'
             - 'modules\ColorPicker\PowerToysInterop.dll'
@@ -72,13 +78,17 @@ build:
             - '**\*.resources.dll'
             - 'modules\FancyZones\fancyzones.dll'
             - 'modules\FancyZones\FancyZonesEditor.exe'
+            - 'modules\FancyZones\FancyZonesEditor.dll'
             - 'modules\FancyZones\ManagedCommon.dll'
             - 'modules\FancyZones\Telemetry.dll'
             - 'modules\FileExplorerPreview\MarkdownPreviewHandler.dll'
+            - 'modules\FileExplorerPreview\MarkdownPreviewHandler.comhost.dll'
             - 'modules\FileExplorerPreview\powerpreview.dll'
             - 'modules\FileExplorerPreview\PreviewHandlerCommon.dll'
             - 'modules\FileExplorerPreview\SvgPreviewHandler.dll'
+            - 'modules\FileExplorerPreview\SvgPreviewHandler.comhost.dll'
             - 'modules\FileExplorerPreview\SVGThumbnailProvider.dll'
+            - 'modules\FileExplorerPreview\SVGThumbnailProvider.comhost.dll'
             - 'modules\FileExplorerPreview\Telemetry.dll'
             - 'modules\ImageResizer\ImageResizer.exe'
             - 'modules\ImageResizer\ImageResizer.dll'
@@ -139,6 +149,16 @@ build:
             - 'SettingsUIRunner\PowerToysInterop.dll'
             - 'SettingsUIRunner\Telemetry.dll'
             - 'SettingsUIRunner\ManagedCommon.dll'
+          signing_options:
+            sign_inline: true  # This does signing a soon as this command completes
+    - !!buildcommand
+      name: 'Build Power Toys Tools'
+      command: '.pipelines\build-tools.cmd'
+      artifacts:
+        - from: 'x64\Release'
+          to: 'Build_Output'
+          include:
+            - 'BugReportTool\BugReportTool.exe'
           signing_options:
             sign_inline: true  # This does signing a soon as this command completes
     - !!buildcommand

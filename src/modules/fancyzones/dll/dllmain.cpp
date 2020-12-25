@@ -1,8 +1,8 @@
 #include "pch.h"
-#include <common/settings_objects.h>
-#include <common/common.h>
+
+#include <common/SettingsAPI/settings_objects.h>
 #include <common/debug_control.h>
-#include <common/LowlevelKeyboardEvent.h>
+#include <common/hooks/LowlevelKeyboardEvent.h>
 #include <interface/powertoy_module_interface.h>
 #include <lib/ZoneSet.h>
 
@@ -13,8 +13,10 @@
 #include <lib/FancyZonesData.h>
 #include <lib/FancyZonesWinHookEventIDs.h>
 #include <lib/FancyZonesData.cpp>
-
-extern "C" IMAGE_DOS_HEADER __ImageBase;
+#include <common/logger/logger.h>
+#include <common/utils/resources.h>
+#include <common/utils/winapi_error.h>
+#include <common/utils/window.h>
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
 {
@@ -74,6 +76,8 @@ public:
     // Enable the powertoy
     virtual void enable()
     {
+        Logger::info("FancyZones enabling");
+
         if (!m_app)
         {
             InitializeWinhookEventIds();
@@ -130,6 +134,8 @@ public:
     // Disable the powertoy
     virtual void disable()
     {
+        Logger::info("FancyZones disabling");
+
         Disable(true);
     }
 
@@ -150,6 +156,9 @@ public:
     {
         app_name = GET_RESOURCE_STRING(IDS_FANCYZONES);
         app_key = NonLocalizable::FancyZonesStr;
+        std::filesystem::path logFilePath(PTSettingsHelper::get_module_save_folder_location(app_key));
+        logFilePath.append(LogSettings::fancyZonesLogPath);
+        Logger::init(LogSettings::fancyZonesLoggerName, logFilePath.wstring(), PTSettingsHelper::get_log_settings_file_location());
         m_settings = MakeFancyZonesSettings(reinterpret_cast<HINSTANCE>(&__ImageBase), FancyZonesModule::get_name(), FancyZonesModule::get_key());
         FancyZonesDataInstance().LoadFancyZonesData();
         s_instance = this;

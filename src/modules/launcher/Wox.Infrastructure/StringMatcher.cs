@@ -9,6 +9,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("Microsoft.Plugin.Program.UnitTests")]
+[assembly: InternalsVisibleTo("Microsoft.Plugin.Sys.UnitTests")]
 
 namespace Wox.Infrastructure
 {
@@ -95,7 +96,19 @@ namespace Wox.Infrastructure
                     spaceIndices.Add(compareStringIndex);
                 }
 
-                if (fullStringToCompareWithoutCase[compareStringIndex] != currentQuerySubstring[currentQuerySubstringCharacterIndex])
+                bool compareResult;
+                if (opt.IgnoreCase)
+                {
+                    var fullStringToCompare = fullStringToCompareWithoutCase[compareStringIndex].ToString();
+                    var querySubstring = currentQuerySubstring[currentQuerySubstringCharacterIndex].ToString();
+                    compareResult = string.Compare(fullStringToCompare, querySubstring, CultureInfo.CurrentCulture, CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace) != 0;
+                }
+                else
+                {
+                    compareResult = fullStringToCompareWithoutCase[compareStringIndex] != currentQuerySubstring[currentQuerySubstringCharacterIndex];
+                }
+
+                if (compareResult)
                 {
                     matchFoundInPreviousLoop = false;
                     continue;

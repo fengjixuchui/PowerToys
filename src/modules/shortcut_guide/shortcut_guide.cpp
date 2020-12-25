@@ -3,14 +3,18 @@
 #include "target_state.h"
 #include "trace.h"
 
-#include <common/common.h>
-#include <common/settings_objects.h>
+#include <common/SettingsAPI/settings_objects.h>
 #include <common/debug_control.h>
 #include <sstream>
-#include <modules\shortcut_guide\ShortcutGuideConstants.h>
+#include <modules/shortcut_guide/ShortcutGuideConstants.h>
 
-extern "C" IMAGE_DOS_HEADER __ImageBase;
-
+#include <common/SettingsAPI/settings_helpers.h>
+#include <common/SettingsAPI/settings_objects.h>
+#include <common/logger/logger.h>
+#include <common/utils/process_path.h>
+#include <common/utils/resources.h>
+#include <common/utils/winapi_error.h>
+#include <common/utils/window.h>
 // TODO: refactor singleton
 OverlayWindow* instance = nullptr;
 
@@ -96,6 +100,10 @@ OverlayWindow::OverlayWindow()
 {
     app_name = GET_RESOURCE_STRING(IDS_SHORTCUT_GUIDE);
     app_key = ShortcutGuideConstants::ModuleKey;
+    std::filesystem::path logFilePath(PTSettingsHelper::get_module_save_folder_location(app_key));
+    logFilePath.append(LogSettings::shortcutGuideLogPath);
+    Logger::init(LogSettings::shortcutGuideLoggerName, logFilePath.wstring(), PTSettingsHelper::get_log_settings_file_location());
+    Logger::info("Overlay Window is creating");
     init_settings();
 }
 
@@ -196,6 +204,8 @@ constexpr UINT alternative_switch_vk_code = VK_OEM_2;
 
 void OverlayWindow::enable()
 {
+    Logger::info("Shortcut Guide is enabling");
+
     auto switcher = [&](HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) -> LRESULT {
         if (msg == WM_KEYDOWN && wparam == VK_ESCAPE && instance->target_state->active())
         {
@@ -223,7 +233,16 @@ void OverlayWindow::enable()
         winkey_popup->apply_overlay_opacity(((float)overlayOpacity.value) / 100.0f);
         winkey_popup->set_theme(theme.value);
         target_state = std::make_unique<TargetState>(pressTime.value);
-        winkey_popup->initialize();
+        try
+        {
+            winkey_popup->initialize();
+        }
+        catch (...)
+        {
+            Logger::critical("Winkey popup failed to initialize");
+            return;
+        }
+
 #if defined(DISABLE_LOWLEVEL_HOOKS_WHEN_DEBUGGED)
         const bool hook_disabled = IsDebuggerPresent();
 #else
@@ -247,6 +266,8 @@ void OverlayWindow::enable()
 
 void OverlayWindow::disable(bool trace_event)
 {
+    Logger::info("Shortcut Guide is disabling");
+
     if (_enabled)
     {
         _enabled = false;
