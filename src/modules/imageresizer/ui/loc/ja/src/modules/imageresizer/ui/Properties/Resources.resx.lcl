@@ -14,7 +14,7 @@
         <Str Cat="Text">
           <Val><![CDATA[About]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[バージョン情報]]></Val>
+            <Val><![CDATA[詳細]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -23,7 +23,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Create a new size]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[新しいサイズの作成]]></Val>
+            <Val><![CDATA[新しいサイズを作成]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -333,10 +333,13 @@
       </Item>
       <Item ItemId=";Input_Resize" ItemType="0;.resx" PsrId="211" Leaf="true">
         <Str Cat="Text">
-          <Val><![CDATA[_Resize]]></Val>
+          <Val><![CDATA[Resize]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[サイズ変更(_R)]]></Val>
+            <Val><![CDATA[サイズ変更]]></Val>
           </Tgt>
+          <Prev Cat="Text">
+            <Val><![CDATA[_Resize]]></Val>
+          </Prev>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -416,7 +419,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(Default)]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(既定値)]]></Val>
+            <Val><![CDATA[(既定)]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -682,7 +685,7 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";TiffCompressOption_Ccitt3" ItemType="0;.resx" PsrId="211" Leaf="true">
+      <Item ItemId=";TiffCompressOption_Ccitt3" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[CCITT3]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
@@ -691,7 +694,7 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";TiffCompressOption_Ccitt4" ItemType="0;.resx" PsrId="211" Leaf="true">
+      <Item ItemId=";TiffCompressOption_Ccitt4" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[CCITT4]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
@@ -704,12 +707,12 @@
         <Str Cat="Text">
           <Val><![CDATA[(Default)]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(既定値)]]></Val>
+            <Val><![CDATA[(既定)]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";TiffCompressOption_Lzw" ItemType="0;.resx" PsrId="211" Leaf="true">
+      <Item ItemId=";TiffCompressOption_Lzw" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[LZW]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
@@ -727,7 +730,7 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";TiffCompressOption_Rle" ItemType="0;.resx" PsrId="211" Leaf="true">
+      <Item ItemId=";TiffCompressOption_Rle" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[RLE]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
@@ -736,12 +739,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";TiffCompressOption_Zip" ItemType="0;.resx" PsrId="211" Leaf="true">
+      <Item ItemId=";TiffCompressOption_Zip" ItemType="0;.resx" PsrId="211" InstFlg="true" Leaf="true">
         <Str Cat="Text">
-          <Val><![CDATA[Zip]]></Val>
+          <Val><![CDATA[ZIP]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[郵便番号]]></Val>
+            <Val><![CDATA[zip 圧縮]]></Val>
           </Tgt>
+          <Prev Cat="Text">
+            <Val><![CDATA[Zip]]></Val>
+          </Prev>
         </Str>
         <Disp Icon="Str" />
       </Item>

@@ -38,7 +38,6 @@ AGGREGATABLE
 AHybrid
 Aissue
 akamaihd
-alannt
 ALarger
 alekhyareddy
 alertsolid
@@ -87,6 +86,9 @@ appx
 appxmanifest
 APSTUDIO
 AQS
+arcosh
+arsinh
+artanh
 ARemapped
 argb
 argc
@@ -117,8 +119,8 @@ atlfile
 atlstr
 attr
 Attribs
-aumid
 AUMID
+aumid
 AUTHN
 AUTOAPPEND
 autocomplete
@@ -146,6 +148,7 @@ Bcl
 bdaa
 bddac
 BEGINLABELEDIT
+benjamhooper
 betadele
 betsegaw
 BGR
@@ -218,10 +221,10 @@ CDeclaration
 cdpx
 cdpxwin
 CENTERALIGN
-Cfg
 cfg
 changecursor
 Changemove
+charconv
 charset
 chdir
 checkbox
@@ -276,9 +279,9 @@ coclass
 codebase
 codecvt
 codeofconduct
+codeql
 codereview
 COINIT
-Colorbrush
 colorconv
 colorhistory
 colorhistorylimit
@@ -329,13 +332,11 @@ countslabelrenamingfmt
 countslabelselectedfmt
 cout
 CPlus
-cplusplus
 CPower
 cpp
 CPPARM
 cppblog
 cppm
-cpprestsdk
 cppruntime
 cppstd
 cppwinrt
@@ -468,8 +469,8 @@ DISPIDAMBIENTDLCONTROL
 DISPINFO
 Displayandhidethedesktop
 DISPLAYCHANGE
-displayname
 DISPLAYNAME
+displayname
 divyan
 DLACTIVEXCTLS
 DLCONTROL
@@ -650,14 +651,13 @@ ENU
 enum
 ENUMITEMS
 EOAC
-EOL
 eol
 epicgames
-eport
 ERASEBKGND
 EREOF
 EResize
-ERRORLEVEL
+eriawan
+errc
 errorlevel
 ERRORMESSAGE
 ERRORTITLE
@@ -799,7 +799,6 @@ globalplugins
 globals
 gmx
 google
-gordonwatts
 GPTR
 grayscale
 GText
@@ -849,18 +848,22 @@ hinstance
 hitinfo
 HIWORD
 hk
-HKCR
+HKCC
 HKCU
+HKCR
+HKE
 hkey
 HKL
 HKLM
+HKPD
+HKU
 HLOCAL
 HLSL
 hmenu
 hmodule
 hmon
-hmonitor
 HMONITOR
+hmonitor
 HOLDENTER
 HOLDESC
 homljgmgpmcbpjbnjpfijnhipfkiclkd
@@ -1075,7 +1078,6 @@ ISavable
 isbi
 ISearch
 IService
-ISetting
 isetting
 isfinite
 IShell
@@ -1114,8 +1116,10 @@ IZoom
 JArray
 jarro
 Jarryd
+javascript
 jfif
 jgeosdfsdsgmkedfgdfgdfgbkmhcgcflmi
+jhutchings
 jjw
 jobject
 jp
@@ -1126,6 +1130,7 @@ JPN
 json
 JSONOf
 jsonval
+jsoref
 jsx
 junja
 jxr
@@ -1152,7 +1157,6 @@ keyremaps
 keystokes
 Keystool
 Keytool
-KEYUP
 keyup
 Kf
 KILLFOCUS
@@ -1161,6 +1165,7 @@ Kybd
 LAlt
 lambson
 lamotile
+langword
 Lastdevice
 LASTEXITCODE
 laute
@@ -1197,6 +1202,7 @@ linkid
 Linkmenu
 linq
 LINQTo
+Linux
 listbox
 listview
 llkhf
@@ -1222,7 +1228,6 @@ LOGPIXELSX
 LOn
 lookbehind
 lowlevel
-lowlevelkb
 LOWORD
 lparam
 LPBYTE
@@ -1298,7 +1303,6 @@ MBUTTON
 MBUTTONDBLCLK
 MBUTTONDOWN
 MBUTTONUP
-mday
 Mdb
 MDICHILD
 MDL
@@ -1342,7 +1346,6 @@ MONITORINFO
 MONITORINFOEX
 MONITORINFOEXW
 monitorinfof
-MONITORINFOF
 Monthand
 Moq
 MOUSEACTIVATE
@@ -1397,7 +1400,6 @@ multizone
 mutex
 mutexes
 muxc
-Mvvm
 mvvm
 MYICON
 myuri
@@ -1696,7 +1698,6 @@ propkey
 propvarutil
 Prt
 prui
-PRVPANE
 prvpane
 psapi
 PSECURITY
@@ -1745,7 +1746,6 @@ RAII
 RAlt
 randyrants
 RAWPATH
-rawtime
 rbegin
 Rbp
 RBUTTON
@@ -1771,6 +1771,7 @@ REFCLSID
 refcount
 REFIID
 REGCLS
+regedit
 regex
 REGISTERCLASSFAILED
 registrypath
@@ -1791,7 +1792,6 @@ RENAMEONCOLLISION
 Renamer
 Reparse
 REPLACEWITH
-reportd
 Reportx
 requery
 requerying
@@ -1810,6 +1810,7 @@ resw
 resx
 returnvalue
 retval
+rexit
 rfind
 rgb
 RGBQUAD
@@ -1889,13 +1890,11 @@ Sekan
 SENDCHANGE
 sendinput
 sendvirtualinput
-sensative
 serializationexception
 serializer
 serizalization
 serverside
 SETCONTEXT
-SETCURSOR
 setcursor
 SETFOCUS
 SETFOREGROUND
@@ -1927,7 +1926,6 @@ SHELLDLL
 shellex
 SHELLEXECUTEINFO
 SHELLEXECUTEINFOW
-Shellscalingapi
 shellscalingapi
 Shelveset
 SHFILEINFO
@@ -1947,12 +1945,12 @@ SHORTCUTSTARTWITHMODIFIER
 Shortcuttool
 shortdate
 SHORTPATH
-should've
 showcolorname
 SHOWDEFAULT
 SHOWELEVATIONPROMPT
 SHOWMAXIMIZED
 SHOWMINIMIZED
+SHOWNA
 SHOWNORMAL
 showwindow
 shtypes
@@ -1979,7 +1977,6 @@ SIZENWSE
 sizeof
 SIZEWE
 sketchapp
-SKIPDOTNETINSTALL
 SKIPOWNPROCESS
 sku
 SKYBLUE
@@ -1991,6 +1988,7 @@ SLogo
 SMALLICON
 SMTO
 snd
+snickler
 somil
 SORTDOWN
 SOURCECLIENTAREAONLY
@@ -2013,6 +2011,7 @@ sql
 src
 SRCCOPY
 sre
+sregex
 SResize
 srme
 srre
@@ -2046,7 +2045,6 @@ stdin
 stdlib
 STDMETHODCALLTYPE
 STDMETHODIMP
-Stdout
 stdout
 STEPIT
 stgm
@@ -2066,7 +2064,6 @@ stringtable
 stringval
 strsafe
 strutil
-STTNGS
 sttngs
 Stubless
 STYLECHANGED
@@ -2089,7 +2086,6 @@ SVGIn
 svgpreviewhandler
 svgr
 SVGSVG
-SWAPBUTTON
 Switchbetweenvirtualdesktops
 SWP
 swprintf
@@ -2103,9 +2099,9 @@ SYSCOLORCHANGE
 SYSCOMMAND
 SYSDEADCHAR
 SYSICONINDEX
+sysinfo
 SYSKEY
 syskeydown
-SYSKEYUP
 syskeyup
 syslog
 SYSMENU
@@ -2163,7 +2159,6 @@ THISCOMPONENT
 thre
 tif
 TILEDWINDOW
-timeinfo
 Timeline
 timeunion
 timeutil
@@ -2182,7 +2177,6 @@ toggleswitch
 toolbar
 Toolchain
 toolset
-Toolset
 tooltip
 toolwindow
 TOPDOWNDIB
@@ -2346,7 +2340,6 @@ VSTT
 VTABLE
 Vtbl
 Vx
-walkthrough
 watsonportal
 wav
 WBounds
@@ -2364,12 +2357,11 @@ wcslen
 wcsncmp
 wcsnicmp
 wdp
-WDS
 wds
 wdupenv
 weakme
 webapp
-webcam
+Webcam
 webclient
 webkit
 webp
@@ -2387,7 +2379,6 @@ wiki
 wikipedia
 wil
 wildcards
-WINAPI
 winapi
 winauto
 wincolor
@@ -2434,7 +2425,6 @@ wixtoolset
 WIXUI
 WKSG
 wmain
-wmi
 WMKEYDOWN
 WMKEYUP
 wmonk
@@ -2449,11 +2439,9 @@ WNDPROC
 woff
 wofstream
 wordpad
-wordpress
 workaround
 workflow
 wostream
-wostringstream
 wox
 wparam
 wpf
@@ -2510,7 +2498,6 @@ XStr
 XToolset
 xunit
 XY
-YAML
 yaml
 YAngle
 YDiff
